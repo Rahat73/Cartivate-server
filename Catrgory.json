@@ -1,0 +1,17 @@
+[
+    {
+        "_id": "1",
+        "category": "Pony car",
+        "image": "https://i.ibb.co/hfdZLWY/pony-car.jpg"
+    },
+    {
+        "_id": "2",
+        "category": "SUV",
+        "image": "https://i.ibb.co/w0yRzZX/suv.jpg"
+    },
+    {
+        "_id": "3",
+        "category": "Sports car",
+        "image": "https://i.ibb.co/bQw64fj/sports-car.jpg"
+    }
+]
