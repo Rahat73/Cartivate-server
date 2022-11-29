@@ -31,11 +31,19 @@ async function run() {
             const query = { email: email };
             const result = await usersCollection.find(query).toArray();
             res.send(result);
+            console.log(result)
         })
-        app.post('/users', async (req, res) => {
+        app.put('/users/:email', async (req, res) => {
+            const email = req.params.email;
             const user = req.body;
             user.verified = false;
-            const result = await usersCollection.insertOne(user);
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            }
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            console.log(result);
             res.send(result);
         })
     }
