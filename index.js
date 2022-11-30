@@ -46,11 +46,28 @@ async function run() {
             res.send(result);
         })
 
+        //admin check
         app.get('/users/isadmin/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isAdmin: user?.userType === 'Admin' });
+        })
+
+        //buyer check
+        app.get('/users/isbuyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isBuyer: user?.userType === 'Buyer' });
+        })
+
+        //seller check
+        app.get('/users/isseller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isSeller: user?.userType === 'Seller' });
         })
 
         //admin queries all buyers
