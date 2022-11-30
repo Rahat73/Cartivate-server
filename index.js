@@ -26,7 +26,7 @@ async function run() {
         })
 
 
-        app.get('/users/:email', async (req, res) => {
+        app.get('/user/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
             const result = await usersCollection.find(query).toArray();
@@ -114,6 +114,15 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        //add product
+        app.post('/addproduct', async (req, res) => {
+            const product = req.body;
+            const d = new Date();
+            product.postTime = d;
+            const result = await productsCollection.insertOne(product);
             res.send(result);
         })
     }
