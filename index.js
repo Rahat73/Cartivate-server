@@ -31,7 +31,6 @@ async function run() {
             const query = { email: email };
             const result = await usersCollection.find(query).toArray();
             res.send(result);
-            console.log(result)
         })
         app.put('/users/:email', async (req, res) => {
             const email = req.params.email;
@@ -44,6 +43,40 @@ async function run() {
             }
             const result = await usersCollection.updateOne(filter, updateDoc, options);
             console.log(result);
+            res.send(result);
+        })
+
+        //admin queries all buyers
+        app.get('/users/admin/buyers', async (req, res) => {
+            const query = { userType: "Buyer" };
+            const result = await usersCollection.find(query).toArray();
+            res.send(result);
+        })
+        //admin queries all sellers
+        app.get('/users/admin/sellers', async (req, res) => {
+            const query = { userType: "Seller" };
+            const result = await usersCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.put('/users/admin/:id', async (req, res) => {
+            // const decodedEmail = req.decoded.email;
+            // const query = { email: decodedEmail };
+            // const user = await usersCollection.findOne(query);
+
+            // if (user?.role !== 'admin') {
+            //     return res.status(403).send({ message: 'forbidden access' })
+            // }
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    verified: true
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
     }
