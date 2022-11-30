@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -59,21 +59,27 @@ async function run() {
             res.send(result);
         })
 
-        app.put('/users/admin/:id', async (req, res) => {
-            // const decodedEmail = req.decoded.email;
-            // const query = { email: decodedEmail };
-            // const user = await usersCollection.findOne(query);
-
-            // if (user?.role !== 'admin') {
-            //     return res.status(403).send({ message: 'forbidden access' })
-            // }
-
-            const id = req.params.id;
+        //verify the user
+        app.put('/users/verify/:sellerId', async (req, res) => {
+            const id = req.params.sellerId;
             const filter = { _id: ObjectId(id) }
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
                     verified: true
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+        //refute the user
+        app.put('/users/refute/:sellerId', async (req, res) => {
+            const id = req.params.sellerId;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    verified: false
                 }
             }
             const result = await usersCollection.updateOne(filter, updatedDoc, options);
