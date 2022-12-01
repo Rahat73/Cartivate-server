@@ -18,6 +18,7 @@ async function run() {
         const productsCollection = client.db('Cartivate').collection('Products');
         const usersCollection = client.db('Cartivate').collection('Users');
 
+        //getting products using category id
         app.get('/products/:categoryId', async (req, res) => {
             const id = req.params.categoryId;
             const query = { categoryId: id };
@@ -26,12 +27,15 @@ async function run() {
         })
 
 
+        //fetching user info using email
         app.get('/user/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
             const result = await usersCollection.find(query).toArray();
             res.send(result);
         })
+
+        //upserting users
         app.put('/users/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
@@ -123,6 +127,36 @@ async function run() {
             const d = new Date();
             product.postTime = d;
             const result = await productsCollection.insertOne(product);
+            res.send(result);
+        })
+
+        //fetching myproducts using seller email
+        app.get('/myproducts/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { sellerEmail: email };
+            const products = await productsCollection.find(query).toArray();
+            res.send(products);
+        })
+
+        //advertise product
+        app.put('/product/advertise/:productId', async (req, res) => {
+            const productId = req.params.productId;
+            const filter = { _id: ObjectId(productId) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    advertise: true
+                }
+            }
+            const result = await productsCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
+        //delete product
+        app.delete('/productdelete/:productId', async (req, res) => {
+            const productId = req.params.productId;
+            const query = { _id: ObjectId(productId) };
+            const result = await productsCollection.deleteOne(query);
             res.send(result);
         })
     }
