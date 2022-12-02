@@ -168,11 +168,18 @@ async function run() {
             res.send(result);
         })
 
-
         //booking a product
-        app.post('/order', async (req, res) => {
+        app.put('/order/:email/:productId', async (req, res) => {
+            const email = req.params.email;
+            const productId = req.params.productId;
             const order = req.body;
-            const result = await ordersCollection.insertOne(order);
+            const filter = { userEmail: email, productId: productId };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: order,
+            }
+            const result = await ordersCollection.updateOne(filter, updateDoc, options);
+            console.log(result);
             res.send(result);
         })
 
@@ -182,6 +189,15 @@ async function run() {
             const productId = req.params.productId;
             // console.log(email, productId)
             const query = { userEmail: email, productId: productId };
+            const result = await ordersCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+        //fetching myorders with email
+        app.get('/myorders/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { userEmail: email };
             const result = await ordersCollection.find(query).toArray();
             res.send(result);
         })
