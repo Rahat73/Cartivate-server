@@ -87,6 +87,12 @@ async function run() {
             const result = await usersCollection.find(query).toArray();
             res.send(result);
         })
+        //admin queries all reported items
+        app.get('/users/admin/reportedItems', async (req, res) => {
+            const query = { reportStatus: true };
+            const result = await productsCollection.find(query).toArray();
+            res.send(result);
+        })
 
         //verify the user
         app.put('/users/verify/:sellerId', async (req, res) => {
@@ -119,6 +125,13 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+        //delete the product
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(query);
             res.send(result);
         })
 
