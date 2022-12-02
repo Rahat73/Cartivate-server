@@ -17,6 +17,7 @@ async function run() {
     try {
         const productsCollection = client.db('Cartivate').collection('Products');
         const usersCollection = client.db('Cartivate').collection('Users');
+        const ordersCollection = client.db('Cartivate').collection('Orders');
 
         //getting products using category id
         app.get('/products/:categoryId', async (req, res) => {
@@ -159,6 +160,77 @@ async function run() {
             const result = await productsCollection.deleteOne(query);
             res.send(result);
         })
+
+        //fetch the products that is advertised and unsold
+        app.get('/advertisedProducts', async (req, res) => {
+            const query = { advertise: true, soldStatus: false };
+            const result = await productsCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+        //booking a product
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await ordersCollection.insertOne(order);
+            res.send(result);
+        })
+
+        //fetch orders with email and product id
+        app.get('/orders/:email/:productId', async (req, res) => {
+            const email = req.params.email;
+            const productId = req.params.productId;
+            // console.log(email, productId)
+            const query = { userEmail: email, productId: productId };
+            const result = await ordersCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        //fetching myorders from orders and products collection using aggregate
+        // app.get('/myorders/:email', async (req, res) => {
+        //     const date = req.query.date;
+        //     const options = await appointmentOptionCollection.aggregate([
+        //         {
+        //             $lookup: {
+        //                 from: 'bookings',
+        //                 localField: 'name',
+        //                 foreignField: 'treatment',
+        //                 pipeline: [
+        //                     {
+        //                         $match: {
+        //                             $expr: {
+        //                                 $eq: ['$appointmentDate', date]
+        //                             }
+        //                         }
+        //                     }
+        //                 ],
+        //                 as: 'booked'
+        //             }
+        //         },
+        //         {
+        //             $project: {
+        //                 name: 1,
+        //                 slots: 1,
+        //                 booked: {
+        //                     $map: {
+        //                         input: '$booked',
+        //                         as: 'book',
+        //                         in: '$$book.slot'
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             $project: {
+        //                 name: 1,
+        //                 slots: {
+        //                     $setDifference: ['$slots', '$booked']
+        //                 }
+        //             }
+        //         }
+        //     ]).toArray();
+        //     res.send(options);
+        // })
     }
     finally {
 
